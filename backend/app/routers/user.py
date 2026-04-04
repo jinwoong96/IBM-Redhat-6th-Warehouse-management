@@ -10,12 +10,12 @@ from app.core.auth import set_auth_cookies, get_user_id
 router = APIRouter(prefix="/users", tags=["User"])
 
 # set_auth_cookies(response, access_token, refresh_token) : response객체에 쿠키로 토큰 저장
-@router.post("/token", response_model=UserRead)
+@router.post("/token")
 async def login(user:UserLogin, response:Response, db:AsyncSession=Depends(get_db)):
     result = await UserService.login(db, user)
     db_user, access_token, refresh_token = result
     set_auth_cookies(response, access_token, refresh_token)
-    return db_user
+    return {"access_token":access_token}
 
 # 로그아웃 시 액세스/리프레시 토큰 쿠키 삭제
 @router.delete("/token", response_model=bool)
