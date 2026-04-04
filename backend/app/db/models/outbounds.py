@@ -8,8 +8,7 @@ from typing import Optional
 class Outbound(Base):
     __tablename__="outbounds"
     outbound_id:Mapped[int]=mapped_column(primary_key=True, index=True)
-    order_id:Mapped[int]=mapped_column(ForeignKey("orders.order_id"), nullable=False)
-    product_id:Mapped[int]=mapped_column(ForeignKey("locations,location_id"), nullable=False)
-    location_id:Mapped[int]=mapped_column(ForeignKey("locations,location_id"), nullable=False)
+    product_id:Mapped[int]=mapped_column(ForeignKey("locations.location_id"), nullable=False)
+    location_id:Mapped[int]=mapped_column(ForeignKey("locations.location_id"), nullable=False)
     outbound_qty:Mapped[int]=mapped_column(nullable=False)
     outbound_date:Mapped[datetime]=mapped_column(TIMESTAMP, server_default=func.now(), nullable=False)
