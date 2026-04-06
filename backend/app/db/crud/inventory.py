@@ -1,6 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.db.models import Inventory
+from app.db.scheme.inventorys import InventoryUpdate
 
 
 class InventoryCrud:
@@ -19,3 +20,14 @@ class InventoryCrud:
         result = await db.execute(semiresult)
 
         return result.scalars.all()
+    
+    @staticmethod
+    async def update_by_id(db:AsyncSession, inventory_id:int, inventory:InventoryUpdate) -> Inventory|None:
+        db_inventory = await db.get(Inventory, inventory_id)
+        if db_inventory:
+            update_data = inventory.model_dump(exclude_unset=True)
+            for key, value in update_data.items():
+                setattr(db_inventory, key, value)
+            await db.flush()
+            return db_inventory
+        return None
