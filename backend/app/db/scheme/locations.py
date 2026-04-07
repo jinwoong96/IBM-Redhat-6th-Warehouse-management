@@ -1,6 +1,4 @@
 from pydantic import BaseModel, Field
-from datetime import datetime, timezone
-from typing import Annotated
 
 
 class LocationBase(BaseModel):
@@ -8,12 +6,12 @@ class LocationBase(BaseModel):
     zone:str
 
 class LocationCreate(BaseModel):
-    location_name:str=Field(le=50)
-    zone:str=Field(le=50)
+    location_name:str
+    zone:str=Field(max_length=2)
 
-class InventoryUpdate(BaseModel):
-    location_name:str | None=Field(le=50)
-    zone:str | None=Field(le=50)
+class LocationUpdate(BaseModel):
+    location_name:str | None=None
+    zone:str | None=Field(max_length=2)
 
 class LocationInDB(LocationBase):
     location_id:int
@@ -21,5 +19,5 @@ class LocationInDB(LocationBase):
     class Config:
         from_attributes = True
 
-class InventoryRead(LocationInDB):
+class LocationRead(LocationInDB):
     pass

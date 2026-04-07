@@ -9,8 +9,8 @@ class ProductBase(BaseModel):
     price:int
 
 class ProductCreate(BaseModel):
-    product_name:str=Field(le=50)
-    category:str=Field(le=40)
+    product_name:str=Field(max_length=50)
+    category:str=Field(max_length=40)
     price:int=Field(ge=0)
 
 class ProductUpdate(BaseModel):

@@ -1,9 +1,44 @@
-from sqlalchemy import ForeignKey, TIMESTAMP, func
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from sqlalchemy.orm import Mapped, mapped_column
-from datetime import datetime
+from sqlalchemy import select
+from app.db.models import Location
+from app.db.scheme.locations import LocationCreate, LocationUpdate
 
 class LocationCrud:
-    pass
+    #로케이션 추가
+    @staticmethod
+    async def create_location(db:AsyncSession, location_data:LocationCreate):
+        new_location = Location(
+            location_name = location_data.location_name,
+            zone = location_data.zone
+        )
+        db.add(new_location)
+        await db.commit()
+        await db.refresh(new_location)
+        return new_location
+    
+    #로케이션 조회
+    @staticmethod
+    async def get_location_by_id(db:AsyncSession, location_id:int):
+        result = await db.execute(
+            select(Location).where(Location.location_id == location_id)
+        ) 
+        return result.scalar_one_or_none()
+    
+    #로케이션 수정
+    @staticmethod
+    async def update_location(db:AsyncSession, db_location:Location, location_data:LocationUpdate):
+        if location_data.location_name is not None:
+            db_location.location_name = location_data.location_name
 
+        if location_data.zone is not None:
+            db_location.zone = location_data.zone
+
+        await db.commit()
+        await db.refresh(db_location)
+        return db_location
+    
+    #로케이션 삭제
+    @staticmethod
+    async def delete_location(db:AsyncSession, db_location:Location):
+        db.delete(db_location)
+        await db.commit()
