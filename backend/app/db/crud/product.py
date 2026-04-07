@@ -16,8 +16,8 @@ class ProductCrud:
         await db.commit()
         await db.refresh(new_product)
         return new_product
-    
 
+    
     #상품 전체 조회
     @staticmethod
     async def get_all_products(db:AsyncSession):
@@ -50,5 +50,5 @@ class ProductCrud:
     #상품 삭제
     @staticmethod
     async def delete_product(db:AsyncSession, db_product:Product):
-        db.delete(db_product)
+        await db.delete(db_product)
         await db.commit()

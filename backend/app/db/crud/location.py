@@ -40,5 +40,5 @@ class LocationCrud:
     #로케이션 삭제
     @staticmethod
     async def delete_location(db:AsyncSession, db_location:Location):
-        db.delete(db_location)
+        await db.delete(db_location)
         await db.commit()
