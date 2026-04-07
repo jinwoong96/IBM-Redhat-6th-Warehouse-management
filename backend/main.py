@@ -4,7 +4,7 @@ from app.db.database import Base, async_engine
 from fastapi.concurrency import asynccontextmanager
 from dotenv import load_dotenv
 from app.middleware.token_refresh import RefreshTokenMiddleware
-from app.routers import user
+from app.routers import user, inbound, outbound, inventory
 
 load_dotenv(dotenv_path=".env")
 
@@ -35,3 +35,6 @@ app.add_middleware(
 
 # 라우터 만든거 추가해주기
 app.include_router(user.router)
+app.include_router(inbound.router)
+app.include_router(outbound.router)
+app.include_router(inventory.router)
