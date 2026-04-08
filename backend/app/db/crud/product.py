@@ -49,6 +49,10 @@ class ProductCrud:
         return db_product
     #상품 삭제
     @staticmethod
-    async def delete_product(db:AsyncSession, db_product:Product):
-        await db.delete(db_product)
-        await db.commit()
+    async def delete_product_by_id(db:AsyncSession, product_id:int):
+        db_product = await db.get(Product, product_id)
+        if db_product:
+            await db.delete(db_product)
+            await db.flush()
+            return db_product
+        return None

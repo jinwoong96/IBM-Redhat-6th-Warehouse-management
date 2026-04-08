@@ -1,5 +1,6 @@
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.exc import IntegrityError
 from fastapi import HTTPException, status
 from app.db.models import Product
 from app.db.crud.product import ProductCrud
@@ -40,9 +41,12 @@ class ProductService:
 
 
     async def delete_product_service(db: AsyncSession, product_id: int):
-        db_product = await ProductCrud.get_product_by_id(db, product_id)
-        if not db_product:
-            raise HTTPException(status_code=404, detail="Product not found")
-        await ProductCrud.delete_product(db, db_product)
-        await db.commit()
-        return {"msg": "삭제 성공"} 
+        try:
+            db_product = await ProductCrud.delete_product_by_id(db, product_id)
+            if not db_product:
+                raise HTTPException(status_code=404, detail="Product not found")
+            await db.commit()
+            return db_product
+        except IntegrityError:
+            raise HTTPException(status_code=400, detail="해당 상품은 삭제할 수 없습니다")
+        

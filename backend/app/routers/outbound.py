@@ -1,12 +1,12 @@
-from fastapi import APIRouter, Depends, Response, Query
+from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
+from app.core.login_check import check_login
 from app.db.database import get_db
-from app.core.auth import set_auth_cookies, get_user_id
 from app.db.scheme.outbounds import OutboundCreate, OutboundRead
 from app.services import OutboundService
 
 
-router = APIRouter(prefix="/outbounds", tags=["Outbound"])
+router = APIRouter(prefix="/outbounds", tags=["Outbound"], dependencies=[Depends(check_login)])
 
 @router.get("")
 async def get_outbounds(product_id:int=Query(None), location_id:int=Query(None), db:AsyncSession=Depends(get_db)):

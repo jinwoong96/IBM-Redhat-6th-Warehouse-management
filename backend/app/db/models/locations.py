@@ -9,5 +9,5 @@ class Location(Base):
     __tablename__="locations"
     location_id:Mapped[int]=mapped_column(primary_key=True, index=True)
     location_name:Mapped[str]=mapped_column(String(50), nullable=False)
-    zone:Mapped[str]=mapped_column(String(50), nullable=False)
+    zone:Mapped[str]=mapped_column(String(2), nullable=False)
     
