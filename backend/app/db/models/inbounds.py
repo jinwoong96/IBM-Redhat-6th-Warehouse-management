@@ -10,5 +10,5 @@ class Inbound(Base):
     inbound_id:Mapped[int]=mapped_column(primary_key=True, index=True)
     product_id:Mapped[int]=mapped_column(ForeignKey("products.product_id"), nullable=False)
     location_id:Mapped[int]=mapped_column(ForeignKey("locations.location_id"), nullable=False)
-    Inbound_qty:Mapped[int]=mapped_column(nullable=False)
+    inbound_qty:Mapped[int]=mapped_column(nullable=False)
     inbound_date:Mapped[datetime]=mapped_column(TIMESTAMP, server_default=func.now(), nullable=False)
