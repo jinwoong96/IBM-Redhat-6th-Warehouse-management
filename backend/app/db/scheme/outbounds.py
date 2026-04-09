@@ -1,6 +1,5 @@
 from pydantic import BaseModel, Field
-from datetime import datetime, timezone
-from typing import Annotated
+from datetime import datetime
 
 
 class OutboundBase(BaseModel):

@@ -1,12 +1,45 @@
+from sqlalchemy import select
+from fastapi import HTTPException, status
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy.future import select
-from fastapi import HTTPException
-from app.core.jwt_handle import (
-    create_access_token,
-    create_refresh_token,
-    get_password_hash, 
-    verify_password
-)
+from sqlalchemy.exc import IntegrityError
+from app.db.models import Location
+from app.db.crud import LocationCrud
+from app.db.scheme.locations import LocationCreate, LocationUpdate
 
 class LocationService:
-    pass
+    async def create_location_service(db: AsyncSession, location_data: LocationCreate):
+        stmt = select(Location).where(
+            Location.location_name == location_data.location_name,
+            Location.zone == location_data.zone
+        )
+        result = await db.execute(stmt)
+        existing_location = result.scalar_one_or_none()
+
+        if existing_location:
+            raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="이미 존재하는 로케이션입니다")
+        return await LocationCrud.create_location(db, location_data)
+
+    async def get_location_by_id_service(db: AsyncSession, location_id: int):
+        db_location = await LocationCrud.get_location_by_id(db, location_id)
+        if not db_location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        return db_location
+
+
+    async def update_location_service(db: AsyncSession, location_id: int, location_data: LocationUpdate):
+        db_location = await LocationCrud.get_location_by_id(db, location_id)
+        if not db_location:
+            raise HTTPException(status_code=404, detail="Location not found")
+        return await LocationCrud.update_location(db, db_location, location_data)
+
+
+    async def delete_location_service(db: AsyncSession, location_id: int):
+        try:
+            db_location = await LocationCrud.delete_location_by_id(db, location_id)
+            if not db_location:
+                raise HTTPException(status_code=404, detail="Location not found")
+            await db.commit()
+            return db_location
+        except IntegrityError:
+            raise HTTPException(status_code=400, detail="사용 중인 로케이션은 삭제할 수 없습니다")
+        
