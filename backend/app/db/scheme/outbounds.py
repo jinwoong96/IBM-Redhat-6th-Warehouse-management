@@ -3,16 +3,14 @@ from datetime import datetime
 
 
 class OutboundBase(BaseModel):
-    order_id:int
     product_id:int
-    location:int
+    location_id:int
     outbound_qty:int
     outbound_date:datetime
 
 class OutboundCreate(BaseModel):
-    order_id:int
     product_id:int
-    location:int
+    location_id:int
     outbound_qty:int=Field(ge=1)
     outbound_date:datetime
 

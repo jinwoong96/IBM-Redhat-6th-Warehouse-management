@@ -40,7 +40,7 @@ class InboundService:
             
             db_inventory=await InventoryCrud.create(db,new_inventory)
                 
-        db_inbound = InboundCrud.create(db, inbound)
+        db_inbound = await InboundCrud.create(db, inbound)
     
         await db.commit()
         await db.refresh(db_inbound)

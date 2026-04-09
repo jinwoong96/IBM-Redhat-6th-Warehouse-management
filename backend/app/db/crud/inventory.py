@@ -38,3 +38,12 @@ class InventoryCrud:
         db.add(db_inventory)
         await db.flush()
         return db_inventory
+    
+    @staticmethod
+    async def delete(db: AsyncSession, inventory_id: int) -> Inventory | None:
+        db_inventory = await db.get(Inventory, inventory_id)
+        if db_inventory:
+            await db.delete(db_inventory)
+            await db.flush()
+            return db_inventory
+        return None
