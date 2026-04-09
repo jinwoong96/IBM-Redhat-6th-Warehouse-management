@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.login_check import check_login
+from app.core.auth import get_current_username
 from app.db.database import get_db
 from app.db.scheme.inbounds import InboundRead, InboundCreate
 from app.services import InboundService
 
-router = APIRouter(prefix="/inbounds", tags=["Inbound"], dependencies=[Depends(check_login)])
+router = APIRouter(prefix="/inbounds", tags=["Inbound"], dependencies=[Depends(get_current_username)])
 
 @router.get("")
 async def get_inbounds(product_id:int=Query(None), location_id:int=Query(None), db:AsyncSession=Depends(get_db)):

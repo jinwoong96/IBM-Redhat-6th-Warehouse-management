@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.login_check import check_login
+from app.core.auth import get_current_username
 from app.db.database import get_db
 from app.db.scheme.products import ProductCreate,ProductUpdate,ProductRead
 from app.services.product import ProductService
 
-router = APIRouter(prefix="/products", tags=["Product"], dependencies=[Depends(check_login)])
+router = APIRouter(prefix="/products", tags=["Product"], dependencies=[Depends(get_current_username)])
 
 #상품 추가
 @router.post("/products", response_model=ProductCreate)

@@ -1,11 +1,11 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
-from app.core.login_check import check_login
+from app.core.auth import get_current_username
 from app.db.database import get_db
 from app.db.scheme.locations import LocationCreate, LocationUpdate, LocationRead
 from app.services.location import LocationService
 
-router = APIRouter(prefix="/locations", tags=["Location"], dependencies=[Depends(check_login)])
+router = APIRouter(prefix="/locations", tags=["Location"], dependencies=[Depends(get_current_username)])
 
 #로케이션 추가
 @router.post("/locations", response_model=LocationCreate)
