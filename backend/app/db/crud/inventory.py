@@ -1,7 +1,7 @@
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.future import select
 from app.db.models import Inventory
-from app.db.scheme.inventorys import InventoryUpdate
+from app.db.scheme.inventorys import InventoryUpdate, InventoryCreate
 
 
 class InventoryCrud:
@@ -31,3 +31,10 @@ class InventoryCrud:
             await db.flush()
             return db_inventory
         return None
+    
+    @staticmethod
+    async def create(db:AsyncSession, user:InventoryCreate) -> Inventory:
+        db_inventory=Inventory(**user.model_dump())
+        db.add(db_inventory)
+        await db.flush()
+        return db_inventory
