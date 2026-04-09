@@ -41,9 +41,9 @@ class UserService:
 
     @staticmethod
     async def signup(db:AsyncSession, user:UserCreate):
-        #중복 username확인
-        if await UserCrud.get_by_username(db, user.username):
-            raise HTTPException(status_code=400,  detail="이미 사용중인 이름이다")
+        #중복 email확인
+        if await UserCrud.get_by_email(db, user.email):
+            raise HTTPException(status_code=400,  detail="이미 사용중인 이메일이다")
         
         #username없으면 -> username, password, email을 디비에 저장해야함
         hash_pw=get_password_hash(user.password) #비번 암호화해서 들어감
@@ -76,8 +76,34 @@ class UserService:
         
         return updated_user, access_token, refresh_token
     
-    #1. 이메일+비번 -> 인증
-    #2. jwt 액세스/리프레시 토큰 발급
-    #3. 리프레시토큰 db저장
-    #4. db커밋 후 사용자 객체 최신화
-    #5. 사용자 정보 + jwt 액세스/리프레시 토큰 반환
+    @staticmethod
+    async def get_user_all(db:AsyncSession) -> list[User]:
+        return await UserCrud.get_all(db)
+
+    @staticmethod
+    async def update_user(db:AsyncSession, user_id:int, new_user:UserUpdate) -> User:
+        if new_user.password:
+            hash_pw=get_password_hash(new_user.password)
+            new_user.password = hash_pw
+
+        db_user=await UserCrud.update_by_id(db, user_id, new_user)
+
+        if not db_user:
+            raise HTTPException(status_code=404, detail="사용자 찾을 수 없다")
+        
+        await db.commit()
+        await db.refresh(db_user)
+        
+        return db_user
+
+
+    @staticmethod
+    async def delete_user(db:AsyncSession, user_id:int):
+        db_user = await UserCrud.delete_by_id(db, user_id)
+
+        if not db_user:
+            raise HTTPException(status_code=404, detail="사용자 찾을 수 없다")
+        
+        await db.commit()
+
+        return db_user
