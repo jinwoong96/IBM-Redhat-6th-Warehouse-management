@@ -17,7 +17,10 @@ class ProductService:
 
         if existing_product:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="이미 존재하는 상품입니다")
-        return await ProductCrud.create_product(db, product_data)
+        new_product = await ProductCrud.create_product(db, product_data)
+        await db.commit()
+        await db.refresh(new_product)
+        return new_product
 
 
     async def get_all_products_service(db: AsyncSession):
@@ -36,8 +39,10 @@ class ProductService:
 
         if not db_product:
             raise HTTPException(status_code=404, detail="Product not found")
-
-        return await ProductCrud.update_product(db, db_product, product_data)
+        updated_product = await ProductCrud.update_product(db, db_product, product_data)
+        await db.commit()
+        await db.refresh(updated_product)
+        return updated_product
 
 
     async def delete_product_service(db: AsyncSession, product_id: int):

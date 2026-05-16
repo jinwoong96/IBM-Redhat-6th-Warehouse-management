@@ -17,7 +17,10 @@ class LocationService:
 
         if existing_location:
             raise HTTPException(status_code=status.HTTP_400_BAD_REQUEST, detail="이미 존재하는 로케이션입니다")
-        return await LocationCrud.create_location(db, location_data)
+        new_location = await LocationCrud.create_location(db, location_data)
+        await db.commit()
+        await db.refresh(new_location)
+        return new_location
 
     async def get_location_by_id_service(db: AsyncSession, location_id: int):
         db_location = await LocationCrud.get_location_by_id(db, location_id)
@@ -30,7 +33,10 @@ class LocationService:
         db_location = await LocationCrud.get_location_by_id(db, location_id)
         if not db_location:
             raise HTTPException(status_code=404, detail="Location not found")
-        return await LocationCrud.update_location(db, db_location, location_data)
+        updated_location = await LocationCrud.update_location(db, db_location, location_data)
+        await db.commit()
+        await db.refresh(updated_location)
+        return updated_location
 
 
     async def delete_location_service(db: AsyncSession, location_id: int):

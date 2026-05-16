@@ -13,8 +13,6 @@ class ProductCrud:
             price = product_data.price
         )
         db.add(new_product)
-        await db.commit()
-        await db.refresh(new_product)
         return new_product
 
     
@@ -44,8 +42,6 @@ class ProductCrud:
         if product_data.price is not None:
             db_product.price = product_data.price
 
-        await db.commit()
-        await db.refresh(db_product)
         return db_product
     #상품 삭제
     @staticmethod

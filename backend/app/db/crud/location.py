@@ -12,8 +12,6 @@ class LocationCrud:
             zone = location_data.zone
         )
         db.add(new_location)
-        await db.commit()
-        await db.refresh(new_location)
         return new_location
     
     #로케이션 조회
@@ -41,8 +39,6 @@ class LocationCrud:
         if location_data.zone is not None:
             db_location.zone = location_data.zone
 
-        await db.commit()
-        await db.refresh(db_location)
         return db_location
     
     #로케이션 삭제
